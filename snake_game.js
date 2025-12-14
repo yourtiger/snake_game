@@ -40,32 +40,44 @@ function initGame() {
     document.getElementById('startBtn').addEventListener('click', startGame);
     document.getElementById('pauseBtn').addEventListener('click', togglePause);
     document.getElementById('resetBtn').addEventListener('click', resetGame);
+    document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
     document.addEventListener('keydown', handleKeyPress);
     
-    // 手机控制按钮事件监听
-    document.getElementById('upBtn').addEventListener('click', function() {
-        if (direction.y === 0) {
-            nextDirection = { x: 0, y: -1 };
-        }
-    });
+    // 监听全屏变化事件
+    document.addEventListener('fullscreenchange', updateFullscreenButton);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+    document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+    document.addEventListener('msfullscreenchange', updateFullscreenButton);
     
-    document.getElementById('downBtn').addEventListener('click', function() {
-        if (direction.y === 0) {
-            nextDirection = { x: 0, y: 1 };
-        }
-    });
+    // 手机控制按钮事件监听 - 支持点击和触摸
+    function setupControlButton(buttonId, newDirection) {
+        const button = document.getElementById(buttonId);
+        
+        // 点击事件
+        button.addEventListener('click', function() {
+            setDirection(newDirection);
+        });
+        
+        // 触摸事件（移动设备）
+        button.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // 防止页面滚动
+            setDirection(newDirection);
+        });
+    }
     
-    document.getElementById('leftBtn').addEventListener('click', function() {
-        if (direction.x === 0) {
-            nextDirection = { x: -1, y: 0 };
+    function setDirection(newDirection) {
+        if (newDirection.x !== 0 && direction.x === 0) {
+            nextDirection = newDirection;
+        } else if (newDirection.y !== 0 && direction.y === 0) {
+            nextDirection = newDirection;
         }
-    });
+    }
     
-    document.getElementById('rightBtn').addEventListener('click', function() {
-        if (direction.x === 0) {
-            nextDirection = { x: 1, y: 0 };
-        }
-    });
+    // 设置所有控制按钮
+    setupControlButton('upBtn', { x: 0, y: -1 });
+    setupControlButton('downBtn', { x: 0, y: 1 });
+    setupControlButton('leftBtn', { x: -1, y: 0 });
+    setupControlButton('rightBtn', { x: 1, y: 0 });
 }
 
 // 重置蛇
@@ -373,6 +385,44 @@ function resetGame() {
     resetSnake();
     generateFood();
     drawGame();
+}
+
+// 全屏功能
+function toggleFullscreen() {
+    const gameContainer = document.querySelector('.game-container');
+    
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        // 进入全屏
+        if (gameContainer.requestFullscreen) {
+            gameContainer.requestFullscreen();
+        } else if (gameContainer.webkitRequestFullscreen) {
+            gameContainer.webkitRequestFullscreen();
+        } else if (gameContainer.mozRequestFullScreen) {
+            gameContainer.mozRequestFullScreen();
+        } else if (gameContainer.msRequestFullscreen) {
+            gameContainer.msRequestFullscreen();
+        }
+    } else {
+        // 退出全屏
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
+
+function updateFullscreenButton() {
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        fullscreenBtn.textContent = '退出全屏';
+    } else {
+        fullscreenBtn.textContent = '全屏';
+    }
 }
 
 // 页面加载完成后初始化游戏
