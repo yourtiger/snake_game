@@ -41,6 +41,31 @@ function initGame() {
     document.getElementById('pauseBtn').addEventListener('click', togglePause);
     document.getElementById('resetBtn').addEventListener('click', resetGame);
     document.addEventListener('keydown', handleKeyPress);
+    
+    // 手机控制按钮事件监听
+    document.getElementById('upBtn').addEventListener('click', function() {
+        if (direction.y === 0) {
+            nextDirection = { x: 0, y: -1 };
+        }
+    });
+    
+    document.getElementById('downBtn').addEventListener('click', function() {
+        if (direction.y === 0) {
+            nextDirection = { x: 0, y: 1 };
+        }
+    });
+    
+    document.getElementById('leftBtn').addEventListener('click', function() {
+        if (direction.x === 0) {
+            nextDirection = { x: -1, y: 0 };
+        }
+    });
+    
+    document.getElementById('rightBtn').addEventListener('click', function() {
+        if (direction.x === 0) {
+            nextDirection = { x: 1, y: 0 };
+        }
+    });
 }
 
 // 重置蛇
