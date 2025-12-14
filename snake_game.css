@@ -112,7 +112,9 @@ button:active {
 /* 手机控制按钮样式 */
 .mobile-controls {
     margin-top: 20px;
-    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
